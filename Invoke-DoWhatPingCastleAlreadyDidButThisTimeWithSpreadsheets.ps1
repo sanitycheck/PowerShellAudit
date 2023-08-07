@@ -11,6 +11,9 @@ function Invoke-DoWhatPingCastleAlreadyDidButThisTimeWithSpreadsheets {
     # Insufficient Krbtgt Password Rotation
     # Get-ADUser 'krbtgt' -Properties passwordlastset -Server $Server | select passwordlastset
 
+    # Identify usage of Pre-Windows 2000 Group
+    # Get-ADGroupMember -Identity "Pre-Windows 2000 Compatible Access" | Select SamAccountName
+
     # Domain Users that do not require a password to authenticate to AD
     Get-DomainUser -UACFilter PASSWD_NOTREQD,NOT_ACCOUNTDISABLE -Server $Server | Select-Object SamAccountName | Out-File ".\Domain_Users_PwdNotReqd_${ProjectSuffix}"
 
