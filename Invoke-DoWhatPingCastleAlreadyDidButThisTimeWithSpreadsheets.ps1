@@ -52,7 +52,7 @@ function Invoke-DoWhatPingCastleAlreadyDidButThisTimeWithSpreadsheets {
 
     # Get all enabled Windows 2012 that have been in use within the last 30 days
     $date = (Get-Date).AddDays(-30)
-    Get-ADComputer -Filter 'operatingsystem -like "*2012*" -and enabled -eq "true" -and (Lastlogondate -GT $date)' -Properties Name,Operatingsystem,OperatingSystemVersion,IPv4Address,Lastlogondate -Server $Server -Verbose | Select-Object -Property Name,Operatingsystem,OperatingSystemVersion,IPv4Address,lastlogondate | ConvertTo-Csv -NoTypeInformation | Out-File ".\Domain_Computers_Windows_Server_2003_${ProjectSuffix}.csv"
+    Get-ADComputer -Filter 'operatingsystem -like "*2012*" -and enabled -eq "true" -and (Lastlogondate -GT $date)' -Properties Name,Operatingsystem,OperatingSystemVersion,IPv4Address,Lastlogondate -Server $Server -Verbose | Select-Object -Property Name,Operatingsystem,OperatingSystemVersion,IPv4Address,lastlogondate | ConvertTo-Csv -NoTypeInformation | Out-File ".\Domain_Computers_Windows_Server_2012_${ProjectSuffix}.csv"
 
     # Get all enabled Windows 7 that have been in use within the last 30 days
     $date = (Get-Date).AddDays(-30)
