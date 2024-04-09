@@ -42,6 +42,18 @@ function Invoke-DoWhatPingCastleAlreadyDidButThisTimeWithSpreadsheets {
     # Privileged Account in Protected Users Group
     Get-DomainUser -AdminCount -Server $Server | ? { $_.memberof -notmatch "Protected Users" } | Select-Object -exp SamAccountName | Out-File ".\Unprotected_Privileged_Accounts_${ProjectSuffix}.log";
 
+    # Get all enabled Windows 2000 that have been in use within the last 30 days
+    $date = (Get-Date).AddDays(-30)
+    Get-ADComputer -Filter 'operatingsystem -like "*2000*" -and enabled -eq "true" -and (Lastlogondate -GT $date)' -Properties Name,Operatingsystem,OperatingSystemVersion,IPv4Address,Lastlogondate -Server $Server -Verbose | Select-Object -Property Name,Operatingsystem,OperatingSystemVersion,IPv4Address,lastlogondate | ConvertTo-Csv -NoTypeInformation | Out-File ".\Domain_Computers_Windows_Server_2000_${ProjectSuffix}.csv"
+
+    # Get all enabled Windows 2003 that have been in use within the last 30 days
+    $date = (Get-Date).AddDays(-30)
+    Get-ADComputer -Filter 'operatingsystem -like "*2003*" -and enabled -eq "true" -and (Lastlogondate -GT $date)' -Properties Name,Operatingsystem,OperatingSystemVersion,IPv4Address,Lastlogondate -Server $Server -Verbose | Select-Object -Property Name,Operatingsystem,OperatingSystemVersion,IPv4Address,lastlogondate | ConvertTo-Csv -NoTypeInformation | Out-File ".\Domain_Computers_Windows_Server_2003_${ProjectSuffix}.csv"
+
+    # Get all enabled Windows 2012 that have been in use within the last 30 days
+    $date = (Get-Date).AddDays(-30)
+    Get-ADComputer -Filter 'operatingsystem -like "*2012*" -and enabled -eq "true" -and (Lastlogondate -GT $date)' -Properties Name,Operatingsystem,OperatingSystemVersion,IPv4Address,Lastlogondate -Server $Server -Verbose | Select-Object -Property Name,Operatingsystem,OperatingSystemVersion,IPv4Address,lastlogondate | ConvertTo-Csv -NoTypeInformation | Out-File ".\Domain_Computers_Windows_Server_2003_${ProjectSuffix}.csv"
+
     # Get all enabled Windows 7 that have been in use within the last 30 days
     $date = (Get-Date).AddDays(-30)
     Get-ADComputer -Filter 'operatingsystem -like "*windows 7*" -and enabled -eq "true" -and (Lastlogondate -GT $date)' -Properties Name,Operatingsystem,OperatingSystemVersion,IPv4Address,Lastlogondate -Server $Server -Verbose | Select-Object -Property Name,Operatingsystem,OperatingSystemVersion,IPv4Address,lastlogondate | ConvertTo-Csv -NoTypeInformation | Out-File ".\Domain_Computers_Windows_7_${ProjectSuffix}.csv"
