@@ -47,6 +47,3 @@ function Get-ExcessivePrivileges {
         Write-Host "No users found with excessive privileges."
     }
 }
-
-# Run the function to find users with excessive privileges
-Get-ExcessivePrivileges
