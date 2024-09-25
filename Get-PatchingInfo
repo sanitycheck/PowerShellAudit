@@ -1,0 +1,59 @@
+function Get-PatchingInfo {
+    param (
+        [string[]]$Servers,
+        [string]$ServerListFile,
+        [string]$OutputDir = "PatchInfo",
+        [switch]$NoCleanup,
+        [switch]$NoCompression
+    )
+
+    if ($ServerListFile) {
+        $Servers = Get-Content -Path $ServerListFile
+    }
+
+    if (-not $Servers) {
+        Write-Error "No servers specified. Please provide a list of servers or a server list file."
+        return
+    }
+
+    if (-not (Get-Command -Name Get-LatestWindowsPatchingDate -ErrorAction SilentlyContinue)) {
+        iex(iwr https://raw.githubusercontent.com/Guyver1wales/Get-LatestWindowsPatchingDate/refs/heads/main/Get-LatestWindowsPatchingDate.ps1)
+    }
+
+    $date = Get-Date -Format "yyyyMMdd"
+    $archive = "$OutputDir-$date.zip"
+
+    Write-Host "[*] Creating directory to store results: $OutputDir"
+    New-Item -Name $OutputDir -ItemType Directory -Force
+
+    Write-Host "`n[*] Fetching patching related information..."
+
+    foreach ($server in $Servers) {
+        $serverName = $server.Split(".")[0]
+        $installedHotfixInfoCsv = "$OutputDir\$serverName-HotFixInfo-$date.csv"
+        $installedProductsCsv = "$OutputDir\$serverName-InstalledProducts-$date.csv"
+
+        Write-Host
+        Write-Host "[ $serverName ]"
+        Write-Host "`t[*] Fetching hotfix information..."
+        Get-LatestWindowsPatchingDate -ComputerName $server | ConvertTo-Csv -NoTypeInformation | Out-File -FilePath $installedHotfixInfoCsv
+        Write-Host "`t[+] Hotfix information saved to: $installedHotfixInfoCsv"
+        Write-Host "`t[*] Retrieving a list of installed software..."
+        Get-WmiObject Win32_Product -ComputerName $Servers | ConvertTo-Csv -NoTypeInformation | Out-File -FilePath $installedProductsCsv
+        Write-Host "`t[+] Installed product information saved to: $installedProductsCsv"
+        Write-Host
+    }
+
+    if (-not $NoCompression) {
+        Write-Host "[*] Compressing results..."
+        Compress-Archive -Path $OutputDir -DestinationPath $archive -Update -CompressionLevel Optimal
+        Write-Host "[+] Results saved to: $archive"
+    } else {
+        Write-Host "[+] Results saved to: $outdir"
+    }
+
+    if (-not $NoCleanup) {
+        Write-Host "[*] Removing artifacts..."
+        Remove-Item -Force $OutputDir -Recurse
+    }
+}
